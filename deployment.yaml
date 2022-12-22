@@ -17,9 +17,6 @@ spec:
       containers:
       - name: fastapi
         image: 192.168.16.40:3000/gitea-admin/fastapi:v1.0
-        imagePullPolicy: IfNotPresent
-        securityContext:
-          runAsUser: 1000
+        imagePullPolicy: IfNotPresent        
         ports:
-        - containerPort: 80
-        tty: true
+        - containerPort: 80        
