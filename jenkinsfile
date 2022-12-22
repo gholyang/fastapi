@@ -1,0 +1,34 @@
+pipeline {
+    agent any
+    environment { 
+        REPOSITORY = '192.168.16.40:3000/gitea-admin/fastapi'
+        DOCKERHUB_ID = 'gitea-admin'
+        DOCKERHUB_PASSWORD = '1'
+        BUILD_NUMBER = 'master'
+    }
+    stages {
+        stage('GitHub Repository Clone') {
+            steps {
+                echo 'Git clone'
+                git branch: 'master', credentialsId: 'syyang', url: 'https://github.com/gholyang/fastapi'                                
+            }
+        }
+        stage('Docker Login') {
+            steps {
+                sh 'echo docker login'
+                sh 'docker login $REPOSITORY -u $DOCKERHUB_ID -p $DOCKERHUB_PASSWORD'
+            }
+        }
+        stage('Docker Build') {
+            steps {
+                sh 'echo docker build'
+                sh 'docker build -f dockerfile --network=host -t $REPOSITORY:$BUILD_NUMBER .'
+            }
+        }
+        stage('Image Push') {
+            steps {
+                sh 'docker push $REPOSITORY:$BUILD_NUMBER'      
+            }
+        }
+    }
+}
